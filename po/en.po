@@ -1,0 +1,7 @@
+#: widget.py:11 widget.py:13 widget.py:15
+msgid "CHANGEME"
+msgstr "CHANGEME"
+
+#: widget.py:23
+msgid "Replace me with the widget content!"
+msgstr "Replace me with the widget content!"
