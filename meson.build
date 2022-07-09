@@ -9,7 +9,7 @@ i18n = import('i18n')
 
 widget_dir = join_paths(get_option('prefix'), get_option('datadir'), 'aspinwall', 'widgets', meson.project_name())
 widget_sources = [
-	'widget.py'
+	'__widget__.py'
 ]
 install_data(widget_sources, install_dir: widget_dir)
 
