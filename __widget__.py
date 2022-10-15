@@ -3,7 +3,7 @@
 Example widget template.
 """
 from aspinwall.widgets import Widget
-from gi.repository import Gtk, Adw
+from gi.repository import Gtk
 translatable = lambda message: message
 
 class MyWidget(Widget):
@@ -19,10 +19,14 @@ class MyWidget(Widget):
         super().__init__(instance)
         _ = self.l
 
+        self.content = Gtk.Box(hexpand=True, orientation=Gtk.Orientation.VERTICAL)
+
         example_label = Gtk.Label(
             label=_('Replace me with the widget content!')
         )
 
         self.content.append(example_label)
+
+        self.set_child(self.content)
 
 _widget_class = MyWidget
