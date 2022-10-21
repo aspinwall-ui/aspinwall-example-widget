@@ -9,7 +9,7 @@ translatable = lambda message: message
 class MyWidget(Widget):
     metadata = {
         "name": translatable("CHANGEME"),
-        "icon": 'preferences-syste,-symbolic',
+        "icon": 'preferences-system-symbolic',
         "description": translatable("CHANGEME"),
         "id": "org.dithernet.aspinwall.widgets.example",
         "tags": translatable('CHANGEME')
