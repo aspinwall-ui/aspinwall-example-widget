@@ -13,7 +13,7 @@ For more information, see [Creating a new widget](https://github.com/aspinwall-u
 - Change the widget class name, and update the `_widget_class` variable at the bottom of the file.
 - If you're planning to use settings schemas, rename the `.xml` file in the `schemas` directory to match your widget's ID and edit it to set the schema ID to your widget's ID.
   * If you're not planning to use settings schemas, remove the `schemas` folder and remove the `subdir('schemas')` line from the `meson.build` in the project's root.
-- Regenerate the po/translation files by following the steps in the `Generating translation files` section.
+- Remove the example-specific .pot file from the `po` directory and regenerate the po/translation files by following the steps in the `Generating translation files` section.
 
 ## Building and installing the widget
 
@@ -32,6 +32,8 @@ meson install -C output
 ```
 
 ## Generating translation files
+
+**NOTE**: The following is automated by the `po/update-po` script. **Make sure to edit it to change the widget ID before using it.**
 
 To generate the .pot file (this only needs to be done once, or whenever the widget ID changes):
 

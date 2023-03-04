@@ -1,0 +1,17 @@
+#!/bin/sh
+
+WIDGET_ID='com.github.aspinwall_ui.example'
+
+### REMOVE ME ONCE YOU ADD THE WIDGET ID ###
+echo "Please modify this script and add your own widget's ID here before running this."
+exit 1
+### REMOVE ME ONCE YOU ADD THE WIDGET ID ###
+
+if [ ! -e '__widget__.py' ]; then echo "Not in widget source directory"; exit 1; fi
+if [ -e output ]; then rm -r output; fi
+
+meson . output
+meson compile "$WIDGET_ID"-pot -C output
+meson compile "$WIDGET_ID"-update-po -C output
+
+rm -r output
