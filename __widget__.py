@@ -8,11 +8,17 @@ translatable = lambda message: message
 
 class MyWidget(Widget):
     metadata = {
-        "name": translatable("CHANGEME"),
-        "icon": 'preferences-system-symbolic',
-        "description": translatable("CHANGEME"),
         "id": "org.dithernet.aspinwall.widgets.example",
-        "tags": translatable('CHANGEME')
+        "version": '0.1.0',
+        "name": translatable("Example widget"),
+        "author": "Your name here",
+        "icon": "preferences-system-symbolic",
+        "description": translatable("Widget template used as a base for development"),
+        "tags": translatable("tag1,tag2,tag3"),
+
+        # Optional metadata
+        "url": "https://github.com/CHANGEME/CHANGEME",
+        "issue_tracker": "https://github.com/CHANGEME/CHANGEME/issues"
     }
 
     def __init__(self, instance=0):
