@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+# Packages the widget into a tar.gz file installable in aspinwall-launcher.
+
+import json
+import logging
+import os
+import shutil
+import subprocess
+import tarfile
+import tempfile
+import traceback
+
+logging.basicConfig(format='%(message)s\n', level=logging.INFO)
+
+# Output colors
+COL_RESET = '\033[0m'
+COL_BOLD = '\033[1m'
+COL_ERROR = '\033[31m'
+COL_SUCCESS = '\033[32m'
+
+if os.path.exists('pkg_output'):
+	shutil.rmtree('pkg_output')
+
+def create_widget_dummy():
+	if os.path.exists('aspinwall_launcher'):
+		shutil.rmtree('aspinwall_launcher')
+
+	os.makedirs(os.path.join('aspinwall_launcher', 'widgets'))
+	with open(os.path.join('aspinwall_launcher', 'widgets', '__init__.py'), 'w') as tmpinit:
+		tmpinit.write("class Widget: pass")
+
+	with open('_tmp_widget.py', 'w') as tmpwidget:
+		with open('__widget__.py') as widget:
+			for line in widget.readlines():
+				if (line.startswith('from ') or line.startswith('import ')) and 'aspinwall_launcher.widgets' not in line:
+					continue
+				tmpwidget.write(line)
+
+def cleanup_widget_dummy():
+	shutil.rmtree('aspinwall_launcher')
+	os.remove('_tmp_widget.py')
+
+def package():
+	with tempfile.TemporaryDirectory() as prefix_dir:
+		logging.info('Building the widget...')
+		# Step 1: build the widget using Meson and install it into a directory
+		try:
+			subprocess.run(f'meson setup --prefix={prefix_dir} --datadir="" . pkg_output', shell=True, check=True)
+			subprocess.run('meson compile -C pkg_output', shell=True, check=True)
+			subprocess.run('meson install -C pkg_output', shell=True, check=True)
+		except:
+			traceback.print_exc()
+			logging.error(f'{COL_BOLD}{COL_ERROR}Failed to build the widget!{COL_RESET}')
+		logging.info('\nWidget built successfuly.')
+
+		# Step 2: prepare the contents that will be put into the tar.gz file
+		prep_path = os.path.join('pkg_output', 'archive_prepare')
+		os.mkdir(prep_path)
+
+		widget_id = os.listdir(os.path.join(prefix_dir, 'aspinwall', 'widgets'))[0]
+		widget_dir = os.path.join(prefix_dir, 'aspinwall', 'widgets', widget_id)
+		shutil.move(widget_dir, os.path.join(prep_path, widget_id))
+
+		# Step 3: prepare the metadata.json file
+		logging.info('Preparing the metadata...')
+		metadata_path = os.path.join(prep_path, 'metadata.json')
+
+		# We import the widget to get its metadata from the widget class.
+		# Before we can do this, we need to do some preparations:
+		# - add a dummy aspinwall_launcher.widgets.Widget class
+		# - remove all other imports
+		create_widget_dummy()
+
+		with open(metadata_path, 'w') as metadata_file:
+			import _tmp_widget
+			metadata = _tmp_widget._widget_class.metadata
+			json.dump(metadata, metadata_file)
+
+		cleanup_widget_dummy()
+
+		# Step 3: make the tar.gz archive
+		if os.path.exists(f'{widget_id}.tar.gz'):
+			os.remove(f'{widget_id}.tar.gz')
+
+		with tarfile.TarFile(name=f'{widget_id}.tar.gz', mode='w', format=tarfile.GNU_FORMAT) as output_tar:
+			output_tar.add(os.path.join(prep_path, widget_id), arcname=widget_id)
+			output_tar.add(os.path.join(prep_path, 'metadata.json'), arcname='metadata.json')
+
+		# Step 4: remove the pkg_output directory created during the build step
+		shutil.rmtree('pkg_output')
+
+		logging.info(f'{COL_BOLD}{COL_SUCCESS}Done!{COL_RESET} The exported file has been saved as {COL_BOLD}{widget_id}.tar.gz{COL_RESET}')
+
+package()
