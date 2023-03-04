@@ -15,3 +15,8 @@ output/
 *.egg-info/
 
 gschemas.compiled
+
+# Used by the package script
+_tmp_widget.py
+aspinwall_launcher
+*.tar.gz
