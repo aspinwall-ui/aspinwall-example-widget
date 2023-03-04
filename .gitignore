@@ -20,3 +20,4 @@ gschemas.compiled
 _tmp_widget.py
 aspinwall_launcher
 *.tar.gz
+pkg_output
