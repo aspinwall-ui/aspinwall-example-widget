@@ -8,7 +8,7 @@ translatable = lambda message: message
 
 class MyWidget(Widget):
     metadata = {
-        "id": "org.dithernet.aspinwall.widgets.example",
+        "id": "com.github.aspinwall_ui.example",
         "version": '0.1.0',
         "name": translatable("Example widget"),
         "author": "Your name here",
